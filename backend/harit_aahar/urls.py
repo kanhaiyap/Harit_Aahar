@@ -23,7 +23,6 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('harit_aahar_app.urls')),
-    path('', views.home, name='home'),
      re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 
 ]
