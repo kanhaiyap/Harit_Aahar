@@ -63,11 +63,14 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",  # ✅ Vite Dev Server
     "http://127.0.0.1:5173",
+    "http://3.87.160.209",
 ]
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 
                         'http://127.0.0.1:3000',
                         "http://localhost:5173",  # ✅ Vite Dev Server
-                          "http://127.0.0.1:5173",]
+                          "http://127.0.0.1:5173",
+                          "http://3.87.160.209",
+                          ]
 
 # Allow all methods (GET, POST, etc.)
 CORS_ALLOW_METHODS = [
