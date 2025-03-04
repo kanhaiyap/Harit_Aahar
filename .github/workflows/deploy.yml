@@ -1,0 +1,64 @@
+name: Deploy to EC2 (Direct)
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            set -e
+            REMOTE_PROJECT_DIR="/home/ubuntu/Harit_Aahar"
+            echo "Changing directory to '$REMOTE_PROJECT_DIR'..."
+            cd "$REMOTE_PROJECT_DIR" || { echo "Directory not found!"; exit 1; }
+
+            echo "Switching to branch 'deploy'..."
+            git checkout -B deploy || { echo "Failed to switch branch on EC2."; exit 1; }
+
+            echo "Pulling latest code from GitHub on branch 'deploy'..."
+            git pull origin deploy || { echo "Git pull failed on EC2. Aborting deployment."; exit 1; }
+
+            echo "Reloading and starting Docker service..."
+            sudo systemctl daemon-reload
+            sudo systemctl start docker
+            sudo usermod -aG docker ubuntu
+
+            echo "Creating Docker network 'harit_network' if it doesn't exist..."
+            sudo docker network inspect harit_network >/dev/null 2>&1 || sudo docker network create harit_network
+
+            echo "Building frontend Docker image on EC2..."
+            docker build --platform linux/amd64 -t harit-frontend:latest ./frontend
+
+            echo "Building backend Docker image on EC2..."
+            docker build --platform linux/amd64 -t harit-backend:latest ./backend
+
+            echo "Removing existing containers if any..."
+            sudo docker rm -f harit_frontend_container harit_backend_container 2>/dev/null || true
+
+            echo "Running backend container..."
+            sudo docker run -d --name harit_backend_container \
+              --network harit_network --network-alias backend \
+              -p 8000:8000 harit-backend:latest
+
+            echo "Running frontend container..."
+            sudo docker run -d --name harit_frontend_container \
+              --network harit_network \
+              -p 8080:80 harit-frontend:latest
+
+            echo "Listing web root contents in the frontend container for verification..."
+            sudo docker exec harit_frontend_container ls -l /usr/share/nginx/html
+
+            echo "Deployment successful!"
