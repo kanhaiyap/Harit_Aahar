@@ -1,4 +1,4 @@
-name: Deploy to EC2 (Direct)
+name: Deploy Django and React to EC2
 
 on:
   push:
@@ -8,11 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -20,16 +16,23 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
+            #!/bin/bash
             set -e
+
+            echo "Running on host: $(hostname)"
             REMOTE_PROJECT_DIR="/home/ubuntu/Harit_Aahar"
+
+            echo "Deleting existing project directory (if it exists)..."
+            sudo rm -rf "$REMOTE_PROJECT_DIR"
+
+            echo "Cloning repository (deploy branch) into $REMOTE_PROJECT_DIR..."
+            git clone --branch deploy --depth 1 https://github.com/kanhaiyap/Harit_Aahar.git "$REMOTE_PROJECT_DIR" || { echo "Clone failed!"; exit 1; }
+
+            echo "Changing ownership of $REMOTE_PROJECT_DIR to ubuntu..."
+            sudo chown -R ubuntu:ubuntu "$REMOTE_PROJECT_DIR"
+
             echo "Changing directory to '$REMOTE_PROJECT_DIR'..."
             cd "$REMOTE_PROJECT_DIR" || { echo "Directory not found!"; exit 1; }
-
-            echo "Switching to branch 'deploy'..."
-            git checkout -B deploy || { echo "Failed to switch branch on EC2."; exit 1; }
-
-            echo "Pulling latest code from GitHub on branch 'deploy'..."
-            git pull origin deploy || { echo "Git pull failed on EC2. Aborting deployment."; exit 1; }
 
             echo "Reloading and starting Docker service..."
             sudo systemctl daemon-reload
@@ -45,7 +48,7 @@ jobs:
             echo "Building backend Docker image on EC2..."
             docker build --platform linux/amd64 -t harit-backend:latest ./backend
 
-            echo "Removing existing containers if any..."
+            echo "Removing existing containers (if any)..."
             sudo docker rm -f harit_frontend_container harit_backend_container 2>/dev/null || true
 
             echo "Running backend container..."
