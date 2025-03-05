@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
 
 import { sendOTP, verifyOTP, getCSRFToken } from '../auth/AuthUtils';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
 const Signup = () => {
   const [userInfo, setUserInfo] = useState({ name: '', phone: '', email: '', password: '' });
   const [otp, setOTP] = useState('');
@@ -64,7 +64,7 @@ const Signup = () => {
     }
   
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/signup/', 
+      const response = await axios.post(`${API_BASE_URL}/api/auth/signup/`, 
         {
           name: userInfo.name,  // Must match backend (username in Django)
           phone: userInfo.phone,  // Must match backend (phone_number in Django)

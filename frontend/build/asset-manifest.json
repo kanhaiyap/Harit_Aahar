@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.7d1b73d2.css",
-    "main.js": "/static/js/main.934b54d9.js",
+    "main.css": "/static/css/main.c8a4af82.css",
+    "main.js": "/static/js/main.3a426079.js",
     "static/media/Organic-Greens.jpeg": "/static/media/Organic-Greens.102cd89cc764f9b3eddd.jpeg",
     "static/media/slide.jpeg": "/static/media/slide.102cd89cc764f9b3eddd.jpeg",
-    "static/media/exotic.jpeg": "/static/media/exotic.666f399a3c016508c70a.jpeg",
+    "static/media/Category1.jpeg": "/static/media/Category1.666f399a3c016508c70a.jpeg",
     "static/media/image4.jpeg": "/static/media/image4.666f399a3c016508c70a.jpeg",
-    "static/media/Fresh Fruit.jpeg": "/static/media/Fresh Fruit.c51461e249076bed0ccb.jpeg",
+    "static/media/Category2.jpeg": "/static/media/Category2.c51461e249076bed0ccb.jpeg",
     "static/media/slide1.jpeg": "/static/media/slide1.c51461e249076bed0ccb.jpeg",
     "static/media/LOGO.png": "/static/media/LOGO.3412f3c800e4c4bf058b.png",
     "static/media/Fresh Vegetable.jpeg": "/static/media/Fresh Vegetable.e6d397aca512a9fea45f.jpeg",
@@ -16,11 +16,11 @@
     "static/media/default-category.jpeg": "/static/media/default-category.36181e3b1086d6a9b8a7.jpeg",
     "static/media/image5.jpeg": "/static/media/image5.36181e3b1086d6a9b8a7.jpeg",
     "index.html": "/index.html",
-    "main.7d1b73d2.css.map": "/static/css/main.7d1b73d2.css.map",
-    "main.934b54d9.js.map": "/static/js/main.934b54d9.js.map"
+    "main.c8a4af82.css.map": "/static/css/main.c8a4af82.css.map",
+    "main.3a426079.js.map": "/static/js/main.3a426079.js.map"
   },
   "entrypoints": [
-    "static/css/main.7d1b73d2.css",
-    "static/js/main.934b54d9.js"
+    "static/css/main.c8a4af82.css",
+    "static/js/main.3a426079.js"
   ]
 }

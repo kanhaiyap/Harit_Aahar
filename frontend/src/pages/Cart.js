@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { getCSRFToken } from '../auth/AuthUtils';
+import axiosInstance from "../auth/AuthUtils";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.160.209:8000"; 
+
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -22,15 +25,31 @@ const Cart = () => {
     const storedCartItems = JSON.parse(localStorage.getItem("cart")) || [];
     console.log("🔹 Cart Items (Before Fix):", storedCartItems);
   
-    const updatedCartItems = storedCartItems.map((item) => ({
-      ...item,
-      image: item.image.startsWith("/products/")
-        ? `http://127.0.0.1:8000${item.image}`
-        : `/images/products/${item.name.replace(/\s+/g, "")}.jpg`, // ✅ Fix name-based image path
-    }));
+    const updatedCartItems = storedCartItems.map((item) => {
+      let imagePath = item.image;
+  
+      // ✅ Strip API_BASE_URL if it's present
+      if (imagePath.startsWith(API_BASE_URL)) {
+        imagePath = imagePath.replace(API_BASE_URL, ""); // Remove full URL
+      }
+  
+      // ✅ Ensure image follows the correct relative path format: /images/products/Apple.jpg
+      if (!imagePath.startsWith("/images/products/")) {
+        const formattedName = item.name.replace(/\s+/g, "").trim(); // ✅ Remove spaces
+        imagePath = `/images/products/${formattedName}.jpg`; // ✅ Final correct format
+      }
+  
+      return {
+        ...item,
+        image: imagePath, // ✅ Save the correct relative path
+      };
+    });
   
     console.log("✅ Cart Items (After Fix):", updatedCartItems);
     setCartItems(updatedCartItems);
+  
+    // ✅ Overwrite localStorage with fixed image paths
+    localStorage.setItem("cart", JSON.stringify(updatedCartItems));
   
     const total = updatedCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     setTotalPrice(total);
@@ -43,7 +62,7 @@ const Cart = () => {
       const csrfToken = await getCSRFToken();
       const authToken = localStorage.getItem("authToken");
 
-      const response = await axios.get("http://127.0.0.1:8000/api/auth/profile/", {
+      const response = await axiosInstance.get(`/api/auth/profile/`, {
         withCredentials: true,
         headers: {
           "X-CSRFToken": csrfToken,
@@ -56,9 +75,9 @@ const Cart = () => {
 
       // ✅ Store profile data (excluding orders)
       setProfile({
-        name: response.data.name,
-        email: response.data.email,
-        phone: response.data.phone_number,
+        name: response.data.name || "Unknown",
+        email: response.data.email || "No email available",
+        phone: response.data.phone_number || "No phone available",
       });
 
       // ✅ Store addresses

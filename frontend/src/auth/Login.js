@@ -1,98 +1,9 @@
-// import axios from "axios";
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { getCSRFToken } from "../auth/AuthUtils"; // ✅ Ensure this is imported
-
-// const Login = () => {
-//   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
-//   const navigate = useNavigate();
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setUserInfo({ ...userInfo, [name]: value });
-//   };
-
-//   const handleLogin = async () => {
-//     console.log("🚀 Attempting login...");
-//     console.log("📌 Sending Login Data:", userInfo); // ✅ Debugging
-
-//     if (!userInfo.email || !userInfo.password) {
-//       alert("❌ Please enter both email/phone and password.");
-//       return;
-//     }
-
-//     try {
-//       const csrfToken = await getCSRFToken(); // ✅ Fetch CSRF token first
-//       console.log("✅ CSRF Token:", csrfToken);
-
-//       if (!csrfToken) {
-//         alert("❌ CSRF Token missing. Refresh the page and try again.");
-//         return;
-//       }
-
-//       const response = await axios.post(
-//         "http://127.0.0.1:8000/api/auth/login/",
-//         {
-//           username: userInfo.email, // ✅ Backend expects "username"
-//           password: userInfo.password,
-//         },
-//         {
-//           headers: {
-//             "Content-Type": "application/json",
-//             "X-CSRFToken": csrfToken, // ✅ Send CSRF token
-//           },
-//           withCredentials: true, // ✅ Allows session cookies
-//         }
-//       );
-
-//       console.log("🎉 Login Success:", response.data);
-//       if (response.data.success) {
-//         const userData = {
-//           name: response.data.user.name,
-//           email: response.data.user.email,
-//           phone_number: response.data.user.phone_number,
-//         };
-//         localStorage.setItem("authToken", response.data.authToken);
-//         alert("✅ Login successful!");
-//         localStorage.setItem("user", JSON.stringify(userData)); // ✅ Store full user data
-//       window.dispatchEvent(new Event("storage")); // ✅ Notify Layout.js of login
-
-
-//         navigate("/profile"); // Redirect to profile page
-//       } else {
-//         alert("❌ Login failed: " + response.data.message);
-//       }
-//     } catch (error) {
-//       console.error("🔥 Login Error:", error.response?.data || error);
-//       alert("❌ Login failed. Check console for details.");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2>Login</h2>
-//       <input type="text" name="email" placeholder="Email or Phone" value={userInfo.email} onChange={handleChange} />
-//       <input type="password" name="password" placeholder="Password" value={userInfo.password} onChange={handleChange} />
-//       <button onClick={handleLogin}>Login</button>
-//       <button onClick={() => navigate('/signup')}>Signup</button>
-//       <button onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
-    
-//     </div>
-//   );
-// };
-
-// export default Login;
-
-
-
-
-
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { getCSRFToken, sendOTP, verifyOTP } from '../auth/AuthUtils';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
 // Ensure axios sends cookies with every request globally.
 axios.defaults.withCredentials = true;
 
@@ -133,7 +44,7 @@ const Login = () => {
     try {
       // Check credentials.
       const credResponse = await axios.post(
-        "http://127.0.0.1:8000/api/auth/login/",
+        `${API_BASE_URL}/api/auth/login/`,
         {
           username: userInfo.phone,
           password: userInfo.password,
@@ -183,7 +94,7 @@ const Login = () => {
       }
       // OTP verified; now complete login.
       const loginResponse = await axios.post(
-        "http://127.0.0.1:8000/api/auth/login/",
+        `${API_BASE_URL}/api/auth/login/`,
         {
           username: userInfo.phone,
           password: userInfo.password,

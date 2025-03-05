@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import { sendOTP, verifyOTP, getCSRFToken } from '../auth/AuthUtils';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const [userIdentifier, setUserIdentifier] = useState('');
@@ -26,7 +26,7 @@ const ForgotPassword = () => {
       console.log('✅ CSRF Token:', csrfToken); // Debugging CSRF Token
   
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/auth/send-otp/',
+        `${API_BASE_URL}/api/auth/send-otp/`,
         { phone_number: userIdentifier },
         {
           headers: {
@@ -86,7 +86,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/auth/reset-password/',
+        `${API_BASE_URL}/api/auth/reset-password/`,
         {
           user_identifier: userIdentifier,
           new_password: newPassword,

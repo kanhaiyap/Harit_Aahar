@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getCSRFToken } from "../auth/AuthUtils";
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"; 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const Profile = () => {
       console.log("✅ CSRF Token:", csrfToken);
       console.log("✅ CSRF Token:", authToken);
 
-      const response = await axios.get("/api/auth/profile/", {
+      const response = await axios.get(`${API_BASE_URL}/api/auth/profile/`, {
       withCredentials: true,  
       headers: {
         "X-CSRFToken": csrfToken,  // CSRF token

@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCSRFToken } from '../auth/AuthUtils';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+console.log("🔹 API Base URL:", API_BASE_URL);
+
 const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -24,7 +27,7 @@ const Checkout = () => {
       const csrfToken = await getCSRFToken();
       const authToken = localStorage.getItem("authToken");
 
-      const response = await axios.get("/api/auth/profile/", {
+      const response = await axios.get(`${API_BASE_URL}/api/auth/profile/`,  {
         headers: {
           "X-CSRFToken": csrfToken,
           "Authorization": authToken ? `Token ${authToken}` : "",
@@ -55,17 +58,19 @@ const Checkout = () => {
   const fetchCartItems = () => {
     const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
     setCartItems(storedCartItems);
-
+    console.log("🖼️ Cart Items:", storedCartItems);
     const total = storedCartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     setTotalPrice(total);
   };
+ 
+
   const handlePayment = async () => {
     try {
       const csrfToken = await getCSRFToken();
       const authToken = localStorage.getItem("authToken");
   
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/create_razorpay_order/", 
+        `${API_BASE_URL}/api/create_razorpay_order/`, 
         { amount: totalPrice },
         {
           headers: {
@@ -96,7 +101,7 @@ const Checkout = () => {
   
           try {
             const verifyResponse = await axios.post(
-              "http://127.0.0.1:8000/api/verify_payment/",
+              `${API_BASE_URL}/api/verify_payment/`,
               { razorpay_payment_id, razorpay_order_id, razorpay_signature },
               {
                 headers: {

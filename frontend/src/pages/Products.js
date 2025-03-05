@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../assets/styles/style.css';
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"; 
 
+console.log(API_BASE_URL)
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const location = useLocation();  // To access the search query from the URL
 
   useEffect(() => {
-    fetch('/api/products/')
+    fetch(`${API_BASE_URL}/api/products/`)
       .then(response => response.json())
       .then(data => {
         setProducts(data);

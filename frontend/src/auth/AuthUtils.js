@@ -1,8 +1,27 @@
 import axios from 'axios';
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,  // ✅ Use dynamic API URL
+  withCredentials: true,  // ✅ Ensure cookies & sessions are sent
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const csrfToken = await getCSRFToken();
+    if (csrfToken) {
+      config.headers["X-CSRFToken"] = csrfToken;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+console.log("✅ API BASE URL:", API_BASE_URL);
 export const getCSRFToken = async () => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/auth/csrf1/", {
+    const response = await fetch(`${API_BASE_URL}/api/auth/csrf1/`, {
       method: "GET",
       credentials: "include",  // ✅ Ensure cookies are sent
     });
@@ -30,8 +49,7 @@ export const sendOTP = async (phoneNumber) => {
   try {
     const csrfToken = await getCSRFToken(); // Fetch CSRF Token before sending request
 
-    const response = await axios.post(
-      '/api/auth/send-otp/',
+    const response = await axiosInstance.post("/api/auth/send-otp/",
       { phone_number: phoneNumber },
       {
         headers: {
@@ -58,8 +76,7 @@ export const verifyOTP = async (phoneNumber, otp) => {
   }
 
   try {
-    const response = await axios.post(
-      "http://127.0.0.1:8000/api/auth/verify-otp/",
+    const response = await axiosInstance.post("/api/auth/verify-otp/",
       { phone_number: phoneNumber, otp: otp }, // ✅ Send phone_number in request
       {
         headers: {
@@ -88,8 +105,8 @@ export const signupUser = async (userInfo) => {
 
     console.log('Sending signup request with:', userInfo);  // Log data before request
 
-    const response = await axios.post(
-      '/api/auth/signup/',
+    const response = await axiosInstance.post(
+      `/api/auth/signup/`,
       userInfo,
       {
         headers: {
@@ -114,7 +131,7 @@ export const getAuthToken = () => localStorage.getItem("authToken");
 
 export const isStaffUser = async () => {
   try {
-    const response = await axios.get("http://127.0.0.1:8000/api/auth/profile/", {
+    const response = await axiosInstance.get("/api/auth/profile/", {
       headers: { Authorization: `Token ${getAuthToken()}` },
     });
     return response.data.is_staff; // Ensure backend sends is_staff
@@ -122,3 +139,5 @@ export const isStaffUser = async () => {
     return false;
   }
 };
+
+export default axiosInstance;

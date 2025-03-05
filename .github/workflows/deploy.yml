@@ -68,5 +68,14 @@ jobs:
 
             echo "Building React application..."
             npm run build
+            
+            
+            echo "Copying React build to Nginx directory..."
+            sudo rm -rf /var/www/html/*
+            sudo cp -r build/* /var/www/html/
+
+            echo "Restarting Nginx..."
+            sudo systemctl restart nginx
+            sudo systemctl status nginx --no-pager || { echo "Nginx failed!"; exit 1; }
 
             echo "Deployment successful!"

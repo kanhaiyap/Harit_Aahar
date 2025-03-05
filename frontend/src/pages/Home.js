@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getCsrfFromCookies } from "../auth/CSRFToken";
 import { useNavigate } from "react-router-dom"; // ✅ Import navigation hook
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"; 
+
 
 
 // ✅ Initialize navigation
@@ -61,7 +63,7 @@ const Home = () => {
           const csrfToken = getCsrfFromCookies(); // ✅ Fetch the CSRF token
           console.log("🔹 CSRF Token in Fetch:", csrfToken);
     
-          const response = await fetch("/api/categories/", {
+          const response = await fetch(`${API_BASE_URL}/api/categories/`, {
             method: "GET",
             headers: {
               "X-CSRFToken": csrfToken,  // ✅ Send CSRF token
