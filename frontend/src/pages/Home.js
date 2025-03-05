@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getCsrfFromCookies } from "../auth/CSRFToken";
 import { useNavigate } from "react-router-dom"; // ✅ Import navigation hook
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"; 
+import axiosInstance from "../auth/AuthUtils"; 
+const API_BASE_URL = process.env.REACT_APP_API_URL; 
 
 
 

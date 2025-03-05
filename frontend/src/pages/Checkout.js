@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCSRFToken } from '../auth/AuthUtils';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 console.log("🔹 API Base URL:", API_BASE_URL);
 
 const Checkout = () => {

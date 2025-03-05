@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { getCSRFToken } from '../auth/AuthUtils';
 import axiosInstance from "../auth/AuthUtils";
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.160.209:8000"; 
+const API_BASE_URL = process.env.REACT_APP_API_URL; 
 
 
 const Cart = () => {

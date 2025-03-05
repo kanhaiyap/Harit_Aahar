@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getCSRFToken } from "../auth/AuthUtils";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000"; 
+const API_BASE_URL = process.env.REACT_APP_API_URL; 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
