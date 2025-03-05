@@ -79,8 +79,7 @@ jobs:
             sudo systemctl status nginx --no-pager || { echo "Nginx failed!"; exit 1; }
             # After "npm run build"
             echo "Starting frontend using serve..."
-            sudo npm install -g serve
-            serve -s build -l 3000 &  # Run in background
+            sudo systemctl restart react-frontend
 
 
             echo "Deployment successful!"
