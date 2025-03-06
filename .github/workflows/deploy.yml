@@ -22,19 +22,17 @@ jobs:
             echo "Running on host: $(hostname)"
             REMOTE_PROJECT_DIR="/home/ubuntu/Harit_Aahar"
 
-            #### ✅ Ensure the project directory exists ####
-            if [ ! -d "$REMOTE_PROJECT_DIR" ]; then
-              echo "Project directory does not exist. Cloning fresh repository..."
-              git clone --branch deploy --depth 1 https://github.com/kanhaiyap/Harit_Aahar.git "$REMOTE_PROJECT_DIR"
-            else
-              echo "Project directory exists. Pulling latest changes..."
-              cd "$REMOTE_PROJECT_DIR"
-              git reset --hard  # Prevent conflicts
-              git pull origin deploy || { echo "Git pull failed!"; exit 1; }
-            fi
+            echo "Deleting existing project directory (if it exists)..."
+            sudo rm -rf "$REMOTE_PROJECT_DIR"
+
+            echo "Cloning repository (deploy branch) into $REMOTE_PROJECT_DIR..."
+            git clone --branch deploy --depth 1 https://github.com/kanhaiyap/Harit_Aahar.git "$REMOTE_PROJECT_DIR" || { echo "Clone failed!"; exit 1; }
 
             echo "Changing ownership of $REMOTE_PROJECT_DIR to ubuntu..."
             sudo chown -R ubuntu:ubuntu "$REMOTE_PROJECT_DIR"
+
+            echo "Changing directory to '$REMOTE_PROJECT_DIR'..."
+            cd "$REMOTE_PROJECT_DIR" || { echo "Directory not found!"; exit 1; }
 
             #### ✅ Install & Start Redis ####
             echo "Checking if Redis is installed..."
@@ -54,7 +52,7 @@ jobs:
             echo "Changing directory to '$REMOTE_PROJECT_DIR/backend'..."
             cd backend || { echo "Backend directory not found!"; exit 1; }
 
-            # Ensure virtual environment exists
+            # Create virtual environment if it doesn't exist
             if [ ! -d "venv" ]; then
               echo "Virtual environment not found. Creating one..."
               python3 -m venv venv
