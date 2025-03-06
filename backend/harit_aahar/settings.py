@@ -260,3 +260,13 @@ TWILIO_CONTENT_SID=os.getenv('TWILIO_CONTENT_SID')
 SECRET_KEY = config('SECRET_KEY')
 RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default=None)
 RAZORPAY_SECRET_KEY = config('RAZORPAY_SECRET_KEY', default=None)
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # Ensure Redis is running
+    }
+}
+
+
+

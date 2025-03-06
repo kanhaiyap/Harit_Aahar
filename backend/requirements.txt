@@ -28,3 +28,4 @@ twilio==9.4.6
 urllib3==2.3.0
 whitenoise==6.9.0
 yarl==1.18.3
+redis==5.2.1
